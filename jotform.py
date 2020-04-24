@@ -70,7 +70,7 @@ class JotformAPIClient:
             req = urllib.request.Request(url, headers=headers, data=None)
             req.get_method = lambda: 'DELETE'
         elif (method == 'PUT'):
-            req = urllib.request.Request(url, headers=headers, data=params)
+            req = urllib.request.Request(url, headers=headers, data=params.encode("utf-8"))
             req.get_method = lambda: 'PUT'
 
         response = urllib.request.urlopen(req)
