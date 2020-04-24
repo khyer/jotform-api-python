@@ -8,8 +8,8 @@
 # version : 1.0
 # package : JotFormAPI 
 
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json
 from xml.dom.minidom import parseString
 
@@ -29,7 +29,7 @@ class JotformAPIClient:
 
     def _log(self, message):
         if self.__debugMode:
-            print message
+            print(message)
 
     def get_debugMode(self):
         return self.__debugMode
@@ -57,23 +57,23 @@ class JotformAPIClient:
 
         if (method == 'GET'):
             if (params):
-                url = url + '?' + urllib.urlencode(params)
+                url = url + '?' + urllib.parse.urlencode(params)
 
-            req = urllib2.Request(url, headers=headers, data=None)
+            req = urllib.request.Request(url, headers=headers, data=None)
         elif (method == 'POST'):
             if (params):
-                data = urllib.urlencode(params)
+                data = urllib.parse.urlencode(params)
             else:
                 data = None
-            req = urllib2.Request(url, headers=headers, data=data)
+            req = urllib.request.Request(url, headers=headers, data=data)
         elif (method == 'DELETE'):
-            req = urllib2.Request(url, headers=headers, data=None)
+            req = urllib.request.Request(url, headers=headers, data=None)
             req.get_method = lambda: 'DELETE'
         elif (method == 'PUT'):
-            req = urllib2.Request(url, headers=headers, data=params)
+            req = urllib.request.Request(url, headers=headers, data=params)
             req.get_method = lambda: 'PUT'
 
-        response = urllib2.urlopen(req)
+        response = urllib.request.urlopen(req)
 
         if (self.__outputType == 'json'):
             responseObject = json.loads(response.read())
@@ -87,7 +87,7 @@ class JotformAPIClient:
         args = {'offset': offset, 'limit': limit, 'filter': filterArray, 'orderby': order_by}
         params = {}
 
-        for key in args.keys():
+        for key in list(args.keys()):
             if(args[key]):
                 if(key == 'filter'):
                     params[key] = json.dumps(args[key])
@@ -100,7 +100,7 @@ class JotformAPIClient:
         args = {'action': action, 'date': date, 'sortBy': sortBy, 'startDate': startDate, 'endDate': endDate}
         params = {}
 
-        for key in args.keys():
+        for key in list(args.keys()):
             if (args[key]):
                 params[key] = args[key]
 
@@ -291,7 +291,7 @@ class JotformAPIClient:
 
         sub = {}
 
-        for key in submission.keys():
+        for key in list(submission.keys()):
             if "_" in key:
                 sub['submission[' + key[0:key.find("_")] + '][' + key[key.find("_")+1:len(key)] + ']'] = submission[key]
             else:
@@ -474,7 +474,7 @@ class JotformAPIClient:
 
         sub = {}
 
-        for key in submission.keys():
+        for key in list(submission.keys()):
             if '_' in key and key != "created_at":
                 sub['submission[' + key[0:key.find('_')] + '][' + key[key.find('_')+1:len(key)] + ']'] = submission[key]
             else:
@@ -520,7 +520,7 @@ class JotformAPIClient:
         """
         params = {}
 
-        for key in question.keys():
+        for key in list(question.keys()):
             params['question[' + key + ']'] = question[key]
 
         return self.fetch_url('/form/' + formID + '/questions', params, 'POST')
@@ -551,7 +551,7 @@ class JotformAPIClient:
         """
         question = {}
 
-        for key in question_properties.keys():
+        for key in list(question_properties.keys()):
             question['question[' + key + ']'] = question_properties[key]
 
         return self.fetch_url('/form/' + formID + '/question/' + qid, question, 'POST')
@@ -568,7 +568,7 @@ class JotformAPIClient:
         """
         properties = {}
 
-        for key in form_properties.keys():
+        for key in list(form_properties.keys()):
             properties['properties[' + key + ']'] = form_properties[key]
 
         return self.fetch_url('/form/' + formID + '/properties', properties, 'POST')
@@ -598,15 +598,15 @@ class JotformAPIClient:
 
         params = {}
 
-        for key in form.keys():
+        for key in list(form.keys()):
             value = form[key]
-            for k in value.keys():
+            for k in list(value.keys()):
                 if (key == 'properties'):
-                    for k in value.keys():
+                    for k in list(value.keys()):
                         params[key + '[' + k + ']'] = value[k]
                 else:
                     v = value[k]
-                    for a in v.keys():
+                    for a in list(v.keys()):
                         params[key + '[' + k + '][' + a + ']'] =v[a]
 
         return self.fetch_url('/user/forms', params, 'POST')

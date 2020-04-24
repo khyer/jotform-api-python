@@ -1,5 +1,7 @@
 jotform-api-python 
 ===============
+### Updated for Python 3
+
 [JotForm API](http://api.jotform.com/docs/) - Python Client
 
 
